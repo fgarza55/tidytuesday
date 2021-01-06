@@ -119,7 +119,8 @@ ggplot(aes(x = reorder(city, avg_cost_km), y = avg_cost_km, fill = continent)) +
         guides(color = TRUE, size = FALSE) +
         labs(fill = "",
              title = "New York, New York",
-             subtitle = "Top 15 expensive cities for transit infrastructure") +
+             subtitle = "Top 15 expensive cities for transit infrastructure",
+              caption = "Data from transitcosts.com\nGraphic by Francisco GF") +
         xlab("") + 
         ylab("Average cost/km in millions of USD by city") +
         scale_fill_manual(values = c("Oceania" = "#4D9DE0", 
