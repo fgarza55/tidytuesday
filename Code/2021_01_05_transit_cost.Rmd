@@ -12,7 +12,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(tidytuesdayR)
-
+library(RColorBrewer)
+library(ggflags)
+library(gapminder)
+library(countrycode)
+library(ggthemes)
+library(here)
 ```
 
 # Load the weekly Data
@@ -49,7 +54,6 @@ tt %>%
 
 transit_cost <- tt$transit_cost
 
-str(transit_cost)
 
 ```
 
@@ -59,7 +63,40 @@ Explore the data and process it into a nice format for plotting! Access each dat
 
 ```{r Wrangle}
 
+str(transit_cost)
 
+continents = countrycode::codelist %>%
+  select(ecb, country.name.en, continent) %>%
+  rename(country = country.name.en)
+
+transit_cost_tidy <- transit_cost %>%
+        rename(ecb = country) %>%
+        mutate(ecb = if_else(ecb == "UK", "GB", ecb)) %>%
+        left_join(continents, by = "ecb") %>%
+        mutate(
+        start_year = as.double(start_year),
+        end_year = as.double(end_year),
+        real_cost = as.double(real_cost),
+        tunnel_per = (parse_number(tunnel_per)/100),
+        ecb = tolower(ecb)) #need lower case to match country flag icons #recode uk to gb for flag #learned from jsakaluk
+       
+        
+        
+        
+        #mutate(country_fullname = countrycode(sourcevar = transit_cost_tidy$country, origin = "iso2c", destination = "country.name"))
+
+str(transit_cost_tidy)        
+#unique(transit_cost_tidy$city)
+
+city_cost_tidy <- transit_cost_tidy %>%
+        group_by(city, continent, ecb) %>%
+        summarise(avg_cost_km = mean(cost_km_millions)) %>%
+        ungroup() %>%
+        arrange(-avg_cost_km) %>%
+        head(15)
+
+#Calculate expensive and cheap cities
+#calculate more efficient construction times
 
 ```
 
@@ -70,8 +107,30 @@ Using your processed dataset, create your unique visualization.
 
 ```{r Visualize}
 
+plot <- city_cost_tidy %>%
+ggplot(aes(x = reorder(city, avg_cost_km), y = avg_cost_km, fill = continent)) +
+        geom_col(alpha = 0.8) +
+        geom_flag(y = -50, aes(country = ecb, size = 1)) +
+        expand_limits(y = 0)+
+        coord_flip()+
+        theme_economist(horizontal = FALSE)+
+        theme(legend.position = c(.7,.8),
+              axis.text.x = element_text(vjust = 3)) +
+        guides(color = TRUE, size = FALSE) +
+        labs(fill = "",
+             title = "New York, New York",
+             subtitle = "Top 15 expensive cities for transit infrastructure") +
+        xlab("") + 
+        ylab("Average cost/km in millions of USD by city") +
+        scale_fill_manual(values = c("Oceania" = "#4D9DE0", 
+                                "Americas" = "#E15554", 
+                                "Africa" = "#E1BC29", 
+                                "Asia" = "#3BB273", 
+                                "Europe" = "#7768AE"))
 
-  
+
+#mean(city_cost_tidy$avg_cost_km)
+#mean(transit_cost_tidy$cost_km_millions,na.rm = TRUE)  
 ```
 
 # Save Image
@@ -79,8 +138,12 @@ Using your processed dataset, create your unique visualization.
 ```{r}
 
 # This will save your most recent plot
-ggsave(
-        filename = here::here("Output","January.5.21_transport","transport.png"))
+ggsave(plot,
+       filename = here::here("Output","2020_01_05_transit_cost","transit_cost.png"),
+       dpi= 300,
+       height = 6,
+       width = 8)
 
+#create  folder first
 
 ```
