@@ -1,0 +1,170 @@
+---
+title: "TidyTemplate"
+date: 2021-01-11
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+#tidytuesdayR::use_tidytemplate()
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(hexbin)
+library(RColorBrewer)
+library(ggthemes)
+library(cowplot)
+library(magick)
+
+```
+
+# Load the weekly Data
+
+Dowload the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2021-01-12")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+str(tt)
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+artists <- tt$artists
+artwork <- tt$artwork
+
+artists_tidy <- artists %>%
+                separate(col = placeOfBirth, 
+                         into = c("city_birth", "country_birth"), 
+                         sep = ",", 
+                         fill = "left") %>%
+                #mutate(country_birth = trimws(artists_tidy$country_birth)) %>%
+                separate(col = placeOfDeath,
+                         into = c("city_death", "country_death"),
+                         sep = ",",
+                         fill = "left") %>%
+                #mutate(country_death = trimws(artists_tidy$country_death)) %>%
+                rename(artistId = id)
+
+
+artwork_tidy <- artwork %>%
+                mutate(area_m = width*height/(1*10^6)) 
+
+tate_join <- full_join(artwork_tidy, artists_tidy, by = "artistId") 
+
+tate_join <- tate_join %>%
+        select(artistId, artist, gender, yearOfBirth, yearOfDeath, city_birth, country_birth, city_death, country_death, title, medium,  year, acquisitionYear,area_m, width, height, everything())
+
+artistsummary <- tate_join %>%
+                filter(artist != "?British School") %>%
+                group_by(country_birth) %>%
+                summarise(n = n()) %>%
+                ungroup()
+#I have problems with the split of countryOfBirth...some countries are in the wrong column #NOTE:review this problem after reviewing other projects
+
+#wrangle with groupby and summarise
+
+topartists <- tate_join %>%
+        group_by(country_birth, acquisitionYear) %>%
+        summarise(n = n()) %>%
+        ungroup()
+
+###Artits summary...from which countries are the artists of the tate collection
+topartists <-  artists_tidy %>%
+        group_by(country_birth) %>%
+        summarise(n = n()) %>%
+        ungroup()
+
+```
+
+
+# Visualize
+
+
+```{r Visualize}
+
+
+artwork_tidy <- artwork_tidy %>%
+                        drop_na(year,area_m)
+
+####Experiment with hexbin package. Not used in final plot.
+
+year <- artwork_tidy$year
+area <- artwork_tidy$area_m
+
+bin <- hexbin(x = year, y = area, xbins = 60)
+
+my_colors=colorRampPalette(rev(brewer.pal(11,'Spectral')))
+plot(bin, main="" , colramp=my_colors , legend=F ) 
+
+####### Plot
+
+plot <- artwork_tidy %>%
+        drop_na(year,area_m) %>%
+        
+        ggplot(aes(x = year, y= area_m)) +
+        geom_point(alpha = 0.08) +
+        scale_y_continuous(trans='log10', labels = function(x) ifelse(x == 0, "0", x), n.breaks = 8) +
+        theme_few() +
+        theme(plot.title = element_text(size = 16, face = "bold", vjust = 2),
+              plot.subtitle = element_text(face = "bold"),
+              plot.caption = element_text(face = "bold"),
+              axis.title.x = element_text(),    
+              axis.title.y = element_text(),
+              plot.margin = unit(c(1,1,1,1), "cm")) +
+         labs(y = (y = expression ("Area of artwork in " ~m^2)),
+       x = "Year of creation", 
+      title = "Area of Tate Collection artworks over the years",
+      caption = "Viz by Francisco GF | Data from the Tate Art Museum")
+
+logo_file <- image_read("https://callforcurators.com/wp-content/uploads/2018/11/300tatelogo.png")
+
+cowplot <- ggdraw() + 
+  draw_plot(plot) +
+  draw_image(logo_file, x = .098, y = .85, hjust = 0, vjust = .6, width = 0.26, height = 0.3)      
+
+cowplot
+
+
+```
+
+# Save Image
+
+```{r}
+
+# This will save your most recent plot
+
+ggsave(cowplot,
+       filename = here::here("Output","2020_01_12_tate_museum","tate_collection.png"),
+       dpi= 300,
+       height = 8,
+       width = 12)
+
+
+```
+
