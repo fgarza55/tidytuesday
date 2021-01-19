@@ -1,0 +1,128 @@
+---
+title: "TidyTemplate"
+date: 2021-01-18
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(hrbrthemes)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-01-19")
+
+
+#remotes::install_github("Shelmith-Kariuki/rKenyaCensus")
+
+gri_area <- rKenyaCensus::V4_T2.25
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+gender <- tt$gender
+households <- tt$households
+crops <- tt$crops
+#Distribution of Households Growing Permanent Crops by Type and County.
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+kenya_crops <- crops %>%
+                filter(SubCounty == "KENYA")
+
+kenya_crops <- kenya_crops %>% 
+        pivot_longer(!SubCounty, names_to = "Crop", values_to = "Households")
+
+glimpse(crops)
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+#I have included all the viz process to observe the progress until the final viz
+
+kenya_crops %>% 
+        ggplot(aes(x = Crop, y = Households)) +
+                geom_bar(stat = "identity")
+
+#Filtering out "Farming" to only take into account perennial crops
+
+kenya_crops <- kenya_crops %>%
+        filter(Crop != "Farming") 
+                
+        kenya_crops %>%
+        ggplot(aes(x = Crop, y = Households)) +
+                geom_bar(stat = "identity")
+
+
+plot <- kenya_crops %>%
+        ggplot(aes(x= reorder(Crop, Households), y=Households))+
+                geom_bar(stat = "identity")+
+                coord_flip() +
+                scale_y_continuous(labels = scales::comma) +
+                theme_ft_rc() +
+                labs(title = "Kenyan Households Growing Perennial Crops by Type",
+                        subtitle = "Did you know Kenya is the 6th avocado producer in the world?",
+                        caption = "Data from rKenyaCensus \n Avocado ranking from FAOSTAT, 2019 \n Viz by Francisco GF",
+                        x = "Crop",
+                        y = "Households")+
+                theme(plot.title = element_text(hjust = 1),
+                        plot.subtitle = element_text(hjust = 1),
+                        axis.title.x = element_text(size = 15),
+                        axis.title.y = element_text(size = 15),
+                        axis.text.x =element_text(size = 12),
+                        axis.text.y =element_text(size = 14),
+                        panel.grid.major.y = element_blank(),
+                        panel.grid.minor.y = element_blank()) 
+plot
+
+```
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+```{r}
+
+ggsave(plot,
+       filename = here::here("Output","2020_01_19_kenya_census","kenya_census.png"),
+       dpi= 300,
+       height = 6,
+       width = 8)
+
+```
