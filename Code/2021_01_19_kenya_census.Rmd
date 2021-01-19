@@ -96,7 +96,7 @@ plot <- kenya_crops %>%
                 coord_flip() +
                 scale_y_continuous(labels = scales::comma) +
                 theme_ft_rc() +
-                labs(title = "Kenyan Households Growing Perennial Crops by Type",
+                labs(title = "Kenyan Households Growing Perennial Crops",
                         subtitle = "Did you know Kenya is the 6th avocado producer in the world?",
                         caption = "Data from rKenyaCensus \n Avocado ranking from FAOSTAT, 2019 \n Viz by Francisco GF",
                         x = "Crop",
