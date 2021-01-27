@@ -3,6 +3,10 @@ Code and Graphics for #tidytuesday
 
 ***
 ### Jan 19, 2020 (Wk 4): Transit Cost
+<img src="https://github.com/fgarza55/tidytuesday/blob/master/Output/2020_01_26_plastics/plastics.png"   />
+
+***
+### Jan 19, 2020 (Wk 4): Transit Cost
 <img src="https://github.com/fgarza55/tidytuesday/blob/master/Output/2020_01_19_kenya_census/kenya_census.png"   />
 
 ***
