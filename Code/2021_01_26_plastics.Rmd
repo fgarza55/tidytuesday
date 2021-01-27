@@ -67,12 +67,14 @@ company_names <- unique(mexico_2020$parent_company)
 mexico_2020 <- mexico_2020 %>%
                     mutate(parent_company = factor(parent_company, 
                                             levels = company_names)) %>%
-                    select(parent_company, 3, 5:11) 
+                    select(-year,-country, 
+                           -empty, -o, -grand_total, 
+                           -num_events, -volunteers) 
 
 #pivot_longer to be able to gather_set_data, required format for Sankey plot 
 
 longer <- pivot_longer(mexico_2020, 
-                       cols = 2:8, 
+                       cols = 2:7, 
                        names_to = "plastic_type", 
                        values_to = "n") %>% 
             arrange(desc(n))
@@ -95,14 +97,16 @@ plot <- ggplot(gather_longer, aes(x = x, id = id, split = y, value = n)) +
     
     labs(title = "Just one word: Plastics", 
          subtitle = "Top 5 polluting brands in the 2020 Break Free from Plastic cleanups in Mexico. \n                 Some of the goals of this citizen science initiative are holding companies accountable and promoting systemic solutions.",
-         caption = "Data from Break Free from Plastic \n Viz by Francisco GF") +
+          x = "ff"  ,
+         caption = c("PP: Polypropylene, HDPE: High Density Polyethylene,\n LDPE: Low Density Polyethylene, PS: Polystyrene", "Data from Break Free from Plastic \n Viz by Francisco GF")) +
+         #caption = "Data from Break Free from Plastic \n Viz by Francisco GF") +
     
     theme_void() +
     theme(plot.title = element_text(hjust = .1, size = 30, face = "bold"),
           plot.subtitle = element_text(hjust = .2),
-          plot.caption = element_text(hjust = .9),
+          plot.caption = element_text(hjust = c(.9,.2)),
           legend.position = "none",
-          plot.margin=unit(c(1,0,1,-.5),"cm"))+
+          plot.margin=unit(c(1,0,.5,-.5),"cm"))+
     scale_x_discrete(expand = c(-.24,.38)) +
   
   #Add specific colors to companies   
@@ -111,7 +115,7 @@ plot <- ggplot(gather_longer, aes(x = x, id = id, split = y, value = n)) +
       "The Coca-Cola Company" = "#F40009",
       "Pepsico" = "#005CB4",
       "Bimbo" = "#F0A202",
-      "Grupo Lala" = "#FFD3DA",
+      "Grupo Lala" = "#FF47A9",
       "Danone" = "#A7CCED"
     ))+
     
@@ -119,39 +123,33 @@ plot <- ggplot(gather_longer, aes(x = x, id = id, split = y, value = n)) +
     #plastics
   annotate(
     geom = "text",
-    x = 2.08,
-    y = 450,
+    x = 2.09,
+    y = 400,
     label = "PET",
     size = 6) +
   annotate(
     geom = "text",
     x = 2.08,
-    y = 250,
+    y = 200,
     label = "PP",
     size = 6) +
   annotate(
     geom = "text",
-    x = 2.09,
-    y = 125,
+    x = 2.095,
+    y = 90,
     label = "HDPE",
     size = 6) +
   annotate(
     geom = "text",
     x = 2.08,
-    y = 90,
+    y = 55,
     label = "PVC",
     size = 4) +
   annotate(
     geom = "text",
     x = 2.08,
-    y = 60,
+    y = 25,
     label = "LDPE",
-    size = 4) +
-  annotate(
-    geom = "text",
-    x = 2.08,
-    y = 30,
-    label = "O",
     size = 4) +
   annotate(
     geom = "text",
@@ -169,19 +167,19 @@ plot <- ggplot(gather_longer, aes(x = x, id = id, split = y, value = n)) +
   annotate(
     geom = "text",
     x = 1.11,
-    y = 200,
+    y = 225,
     label = "Pepsico",
     size = 6) +
   annotate(
     geom = "text",
     x = 1.09,
-    y = 110,
+    y = 100,
     label = "Bimbo",
     size = 5) +
   annotate(
     geom = "text",
     x = 1.1,
-    y = 55,
+    y = 50,
     label = "Danone",
     size = 5) +
   annotate(
@@ -201,7 +199,7 @@ plot
 ```{r}
 
 ggsave(plot,
-       filename = here::here("Output","2020_01_26_plastics","plastics.png"),
+       filename = here::here("Output","2020_01_26_plastics","plastics_v2.png"),
        dpi= 300,
        height = 6,
        width = 10)
