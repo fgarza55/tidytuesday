@@ -2,7 +2,7 @@
 Code and Graphics for #tidytuesday
 
 ***
-### Jan 19, 2020 (Wk 4): Transit Cost
+### Jan 26, 2020 (Wk 5): Plastic Pollution
 <img src="https://github.com/fgarza55/tidytuesday/blob/master/Output/2020_01_26_plastics/plastics.png"   />
 
 ***
