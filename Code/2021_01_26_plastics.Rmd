@@ -13,7 +13,6 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidytuesdayR)
 library(ggforce)
-library(ggtext)
 
 #tidytuesdayR::use_tidytemplate()
 
@@ -99,7 +98,6 @@ plot <- ggplot(gather_longer, aes(x = x, id = id, split = y, value = n)) +
          subtitle = "Top 5 polluting brands in the 2020 Break Free from Plastic cleanups in Mexico. \n                 Some of the goals of this citizen science initiative are holding companies accountable and promoting systemic solutions.",
           x = "ff"  ,
          caption = c("PP: Polypropylene, HDPE: High Density Polyethylene,\n LDPE: Low Density Polyethylene, PS: Polystyrene", "Data from Break Free from Plastic \n Viz by Francisco GF")) +
-         #caption = "Data from Break Free from Plastic \n Viz by Francisco GF") +
     
     theme_void() +
     theme(plot.title = element_text(hjust = .1, size = 30, face = "bold"),
