@@ -1,0 +1,88 @@
+---
+title: "TidyTemplate"
+date: 2021-02-01
+output: html_output
+---
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tidytuesdayR::tt_load('2021-02-02')
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+# Glimpse Data
+
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+```
+# Wrangle
+
+```{r Wrangle}
+
+hbcu_all <- tt$hbcu_all
+
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+plot <- hbcu_all %>% 
+  ggplot( aes(x=Year, y=`Total enrollment`)) +
+    geom_line() +
+    scale_y_continuous(labels = scales::comma, limits = c(0, NA)) +
+    theme_solarized() +
+    theme(plot.title = element_text(face = "bold"),
+          axis.title.x = element_text(face = "bold"),
+          axis.title.y = element_text(face = "bold"),
+          plot.margin=unit(c(.3,.3,.3,.3),"cm")) +
+    
+    labs(title = "Enrollment in Historically Black Colleges and Universities (HBCU)",
+        subtitle = "HBCUs are a vital resource in the educational system; they have provided \nundergrad training for 3/4 of all black persons holding a doctorate degree;  \n3/4 of all black officers in the armed forces; and \n4/5 of all black federal judges. (U.S. Department of Education)",
+        x = "Year"  ,
+        y = "Total enrollment",
+        caption = c("Data from Data.World  \n Viz by Francisco GF"))
+
+plot
+
+```
+
+# Save Image
+
+```{r}
+
+ggsave(plot,
+       filename = here::here("Output","2021_02_02_HBCU","HBCU.png"),
+       dpi= 300,
+       height = 6,
+       width = 8)
+
+```
