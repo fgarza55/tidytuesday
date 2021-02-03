@@ -2,6 +2,11 @@
 Code and Graphics for #tidytuesday
 
 ***
+### Feb 2, 2021 (Wk 6): HBCU
+<img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_02_02_HBCU/HBCU.png />
+
+
+***
 ### Jan 26, 2020 (Wk 5): Plastic Pollution
 <img src="https://github.com/fgarza55/tidytuesday/blob/master/Output/2020_01_26_plastics/plastics_v2.png"   />
 
