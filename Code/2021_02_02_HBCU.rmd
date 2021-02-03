@@ -58,6 +58,7 @@ hbcu_all <- tt$hbcu_all
 plot <- hbcu_all %>% 
   ggplot( aes(x=Year, y=`Total enrollment`)) +
     geom_line() +
+    geom_point() +
     scale_y_continuous(labels = scales::comma, limits = c(0, NA)) +
     theme_solarized() +
     theme(plot.title = element_text(face = "bold"),
