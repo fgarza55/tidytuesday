@@ -120,7 +120,7 @@ Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your p
 ```{r}
 
 ggsave(plot,
-       filename = here::here("Output","2020_01_19_kenya_census","kenya_census.png"),
+       filename = here::here("Output","2021_01_19_kenya_census","kenya_census.png"),
        dpi= 300,
        height = 6,
        width = 8)

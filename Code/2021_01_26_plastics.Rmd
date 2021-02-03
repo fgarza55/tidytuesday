@@ -197,7 +197,7 @@ plot
 ```{r}
 
 ggsave(plot,
-       filename = here::here("Output","2020_01_26_plastics","plastics_v2.png"),
+       filename = here::here("Output","2021_01_26_plastics","plastics_v2.png"),
        dpi= 300,
        height = 6,
        width = 10)
