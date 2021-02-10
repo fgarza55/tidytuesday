@@ -98,7 +98,7 @@ plot <- income_distribution %>%
 
 ggsave(plot,
        filename = here::here("Output",
-                             "2021_02_08_wealth_income",
+                             "2021_02_09_wealth_income",
                              "wealth_income.png"),
        dpi= 300,
        height = 6,
