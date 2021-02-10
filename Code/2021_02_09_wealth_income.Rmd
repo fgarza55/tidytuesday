@@ -1,0 +1,108 @@
+---
+title: "TidyTemplate"
+date: 2021-02-08
+output: html_output
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+#tidytuesdayR::use_tidytemplate()
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-02-09")
+
+```
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+income_distribution <- tt$income_distribution
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+race_names <- c("White Alone", "Hispanic (Any Race)", "Black Alone")
+
+font_add_google("Oswald", "Oswald")
+
+plot <- income_distribution %>%
+    filter(race %in% race_names) %>%
+    drop_na(income_mean) %>%
+    ggplot( aes(x=year, y=income_mean, color = race )) +
+        geom_line(lwd = 2) +
+        #geom_point() +
+        #geom_errorbar(aes(ymin=income_mean - income_mean_moe,
+                          #ymax=income_mean + income_mean_moe),
+                      #width = .2) +
+        scale_y_continuous(labels = scales::comma, limits = c(0, NA)) +
+        scale_x_continuous(breaks = seq(1970, 2019,10)) +
+  
+        labs(title = "Racial Wealth Inequality in the United States",
+             subtitle = "There's a long way to go in reducing the income gap.\nThe income of Black and Hispanic households have not increased like the earnings of White households.",
+             x = "Year",
+             y = "Household Income Mean (USD)",
+             caption = "Data from the Urban Institute and the US Census \n Viz by Francisco GF") +
+  
+        theme_hc() +
+        theme(text = element_text(family = "Oswald", size = 45),
+              plot.title = element_text(size = 45),
+              plot.caption = element_text(size = 25, lineheight = .3),
+              plot.subtitle = element_text(size = 35, lineheight = .3),
+              panel.background = element_rect(fill = NA),
+              legend.background = element_rect(fill = NA),
+              plot.margin=unit(c(.3,.3,.3,.3),"cm"),
+              plot.background = element_rect(fill = "#F9E7DC",
+                                            color = "#F9E7DC", size = 2))
+
+  
+```
+
+# Save Image
+
+```{r}
+
+ggsave(plot,
+       filename = here::here("Output",
+                             "2021_02_08_wealth_income",
+                             "wealth_income.png"),
+       dpi= 300,
+       height = 6,
+       width = 8)
+
+```
+
