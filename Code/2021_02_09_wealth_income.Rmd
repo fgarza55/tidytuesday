@@ -12,6 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(tidytuesdayR)
 library(ggthemes)
+library(showtext)
 
 ```
 
@@ -59,6 +60,7 @@ Using your processed dataset, create your unique visualization.
 race_names <- c("White Alone", "Hispanic (Any Race)", "Black Alone")
 
 font_add_google("Oswald", "Oswald")
+showtext_auto()
 
 plot <- income_distribution %>%
     filter(race %in% race_names) %>%
