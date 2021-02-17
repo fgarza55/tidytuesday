@@ -1,0 +1,109 @@
+---
+title: "TidyTemplate"
+date: 2021-02-15
+output: html_output
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(showtext)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-02-16")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+Take an initial look at the format of the data available.
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+georgia <- tt$georgia_pop
+
+```
+
+#Wragnle
+
+```{r}
+
+georgia <- georgia %>%
+            pivot_longer(!Year, names_to = "Race", values_to = "Percents")
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+font_add_google("Public Sans", "Public Sans")
+showtext_auto()
+
+plot <- georgia %>%
+          ggplot(aes( x = Year, y = Percents, group = Race)) +
+            geom_line(aes(linetype = Race), size = 1) +
+            scale_y_continuous(breaks = seq(0,100,5), trans = "reverse") +
+            scale_x_continuous(breaks = seq(1790,1890,10)) +
+            
+            theme(legend.position = "bottom",
+                  legend.title = element_blank(),
+                  legend.key.width = unit(3, "cm"),
+                  legend.key = element_rect(colour = "transparent", 
+                                            fill = "white"),
+                  plot.title = element_text(hjust = 0.5, size = 45, 
+                                            lineheight = 0.3),
+                  plot.margin=unit(c(1,1,1,1),"cm"),
+                  text = element_text(family = "Public Sans")) +
+  
+            labs(x = "", y = "PERCENTS",
+                 title = "COMPARATIVE INCREASE OF WHITE AND COLORED \nPOPULATION OF GEORGIA.") +
+  
+            coord_flip(expand = FALSE)
+
+#cambiar...letra Public sans, gridlines,
+
+plot
+
+```
+
+# Save Image
+
+
+```{r}
+
+ggsave(plot,
+       filename = here::here("Output",
+                             "2021_02_16_dubois",
+                             "dubois.png"),
+       dpi= 300,
+       height = 12,
+       width = 8)
+```
