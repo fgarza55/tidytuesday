@@ -1,5 +1,13 @@
 # tidytuesday
 Code and Graphics for #tidytuesday
+
+
+
+### Feb 16, 2021 (Wk 8): #DuBoisChallenge
+<img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_02_16_dubois/dubois.png>
+
+***
+
 ### Feb 9, 2021 (Wk 7): Wealth and income over time in the US
 <img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_02_09_wealth_income/wealth_income.png/>
 
