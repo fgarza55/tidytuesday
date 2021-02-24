@@ -1,0 +1,179 @@
+---
+title: "TidyTemplate"
+date: 2021-02-23
+output: html_output
+---
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+
+```
+
+# Load the weekly Data
+
+Dowload the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2021-02-23")
+
+```
+
+
+# Readme
+
+Take a look at the readme for the weekly data to get insight on the dataset.
+This includes a data dictionary, source, and a link to an article on the data.
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+Take an initial look at the format of the data available.
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+```
+
+# Wrangle
+
+Explore the data and process it into a nice format for plotting! Access each dataset by name by using a dollarsign after the `tt` object and then the name of the data set.
+
+```{r Wrangle}
+
+employed <- tt$employed
+earn <- tt$earn
+
+employed_group <- employed %>%
+                    mutate(industry = fct_collapse(industry,
+                            `Other services` = c("Other services", 
+                                                "Other services, except private households"),
+                            `Wholesale and retail` = c("Retail trade", 
+                                                        "Wholesale and retail trade",
+                                                        "Wholesale trade"),
+                            `Extractive industries` = c("Mining, quarrying, and oil and gas extraction"))) %>%
+                    group_by(industry, race_gender, year) %>%
+                    summarise(employ_n = sum(employ_n)) %>%
+                    filter(race_gender != "TOTAL", 
+                           race_gender != "Men",
+                           race_gender != "Women",
+                           industry != "Asian",
+                           industry != "Black or African American")
+                    
+                                            
+
+#employed_2020 <- fct_collapse(employed_group$industry,
+                           #      Other_services = c("Other services", "Other services, except private households")) 
+
+employed_2020 <- employed_group %>%
+                    filter(year == 2020) %>%
+                    arrange(employ_n) 
+                    #mutate(industry = factor(industry, levels = industry))
+
+employed_2020$race_gender <- factor(employed_2020$race_gender, levels = c("Black or African American", "Asian", "White"))
+
+#Group industries Wholesale Trade, Other services,
+#Change mininng name
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+
+plot <- ggplot(employed_2020, aes(x= reorder(industry, employ_n), y = employ_n, fill = race_gender)) +
+    #geom_col(width = .5, position = "fill") +
+    geom_col(width = .5) +
+    coord_flip() +
+    scale_y_continuous(labels = scales::unit_format(unit = "M",
+                                                    scale = 1e-6)) +
+    scale_fill_manual(guide = guide_legend(reverse = T),
+                      values=c("#f3b21a", "#00aa00", "#dc143c")) +
+    #scale_y_continuous(labels = scales::comma) +
+    
+    labs(x = "", y = "NUMBER OF EMPLOYEES",
+                 title = "EMPLOYED PERSONS BY INDUSTRY AND RACE.\n2020.",
+                 caption = "Data from BLS | #DuBoisChallenge | Viz by Francisco GF") +
+    
+    theme(
+        plot.title = element_text(hjust = 0.5,
+                                face = "bold", lineheight = 0.8),
+        plot.margin=unit(c(1,1,1,1),"cm"),
+        plot.background = element_rect(fill = "#ecdfd3"),
+        panel.background = element_rect(fill = "#ecdfd3"),
+        #panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(colour = "transparent", 
+                                    fill = "transparent")
+        )
+
+plot
+
+sysfonts::font_add_google(name = "Quantico","Quantico")
+showtext::showtext_auto()
+
+plot <- ggplot(employed_2020, aes(x= reorder(industry, employ_n), y = employ_n)) +
+    geom_bar(aes(fill = fct_rev(race_gender)), stat = "identity", position = position_stack(reverse = F)) +
+    coord_flip() +
+    scale_y_continuous(labels = scales::unit_format(unit = "M",
+                                                    scale = 1e-6)) +
+    scale_fill_manual(guide = guide_legend(reverse = T),
+                      values=c("#dc143c","#f3b21a", "#00aa00")) +
+    
+    labs(x = "", y = "NUMBER OF EMPLOYEES",
+                 title = "EMPLOYED PERSONS BY INDUSTRY AND RACE.\n2020.",
+                 caption = "Data from BLS | #DuBoisChallenge | Viz by Francisco GF") +
+    
+    theme(
+        plot.title = element_text(hjust = 0.5, size = 60, 
+                                face = "bold", lineheight = 0.3),
+        plot.margin=unit(c(1,1,1,1),"cm"),
+        plot.background = element_rect(fill = "#ffebcd"),
+        panel.background = element_rect(fill = "#ffebcd"),
+        #panel.grid.minor = element_blank(),
+        panel.grid.major.y = element_blank(),
+        
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(colour = "transparent", 
+                                    fill = "transparent"),
+        
+        text = element_text(family = "Quantico")
+        )
+
+plot
+  
+```
+
+# Save Image
+
+Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
+
+```{r}
+
+ggsave("2021_06_23_BLS.png", plot = last_plot(), 
+       device = "png", path = here::here("Output", "2021_06_23_BLS"),
+       width = 8, height = 7)
+
+```
