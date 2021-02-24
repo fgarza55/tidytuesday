@@ -1,7 +1,10 @@
 # tidytuesday
 Code and Graphics for #tidytuesday
 
+### Feb 23, 2021 (Wk 9): 2020 Employment - BLS - #DuBoisChallenge
+<img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_06_23_BLS/2021_06_23_BLS.png>
 
+***
 
 ### Feb 16, 2021 (Wk 8): #DuBoisChallenge
 <img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_02_16_dubois/dubois.png>
