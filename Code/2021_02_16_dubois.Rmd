@@ -53,6 +53,7 @@ georgia <- tt$georgia_pop
 ```{r}
 
 georgia <- georgia %>%
+            rename(COLORED = Colored, WHITE = White) %>%
             pivot_longer(!Year, names_to = "Race", values_to = "Percents")
 
 ```
@@ -60,7 +61,6 @@ georgia <- georgia %>%
 
 # Visualize
 
-Using your processed dataset, create your unique visualization.
 
 ```{r Visualize}
 
@@ -73,22 +73,36 @@ plot <- georgia %>%
             scale_y_continuous(breaks = seq(0,100,5), trans = "reverse") +
             scale_x_continuous(breaks = seq(1790,1890,10)) +
             
-            theme(legend.position = "bottom",
-                  legend.title = element_blank(),
-                  legend.key.width = unit(3, "cm"),
-                  legend.key = element_rect(colour = "transparent", 
-                                            fill = "white"),
-                  plot.title = element_text(hjust = 0.5, size = 45, 
-                                            lineheight = 0.3),
+            theme(plot.title = element_text(hjust = 0.5, size = 100,
+                                            face = "bold", lineheight = 0.2),
                   plot.margin=unit(c(1,1,1,1),"cm"),
+                  plot.background = element_rect(fill = "#ecdfd3"),
+                  plot.caption = element_text(size = 60),
+                  
+                  panel.background = element_rect(fill = "#ecdfd3"),
+                  panel.grid.major = element_line(color = "#dc143c", size = .4),
+                  panel.grid.minor = element_blank(),
+                  
+                  axis.text = element_text(size = 70),
+                  axis.title = element_text(size = 70),
+                  
+                  
+                  legend.position = "bottom",
+                  legend.title = element_blank(),
+                  legend.text = element_text(size = 65),
+                  legend.key.width = unit(3, "cm"),
+                  legend.background = element_rect(fill = "transparent"),
+                  legend.key = element_rect(colour = "transparent", 
+                                            fill = "transparent"),
+                  
+                  
                   text = element_text(family = "Public Sans")) +
   
             labs(x = "", y = "PERCENTS",
-                 title = "COMPARATIVE INCREASE OF WHITE AND COLORED \nPOPULATION OF GEORGIA.") +
+                 title = "COMPARATIVE INCREASE OF WHITE AND COLORED \nPOPULATION OF GEORGIA.",
+                 caption = "Data from #DuBoisChallenge | Francisco GF") +
   
             coord_flip(expand = FALSE)
-
-#cambiar...letra Public sans, gridlines,
 
 plot
 
@@ -103,7 +117,7 @@ ggsave(plot,
        filename = here::here("Output",
                              "2021_02_16_dubois",
                              "dubois.png"),
-       dpi= 300,
+       dpi= 600,
        height = 12,
        width = 8)
 ```
