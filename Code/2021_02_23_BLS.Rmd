@@ -124,8 +124,8 @@ plot
 
 ```{r}
 
-ggsave("2021_06_23_BLS.png", plot = last_plot(), 
-       device = "png", path = here::here("Output", "2021_06_23_BLS"),
+ggsave("2021_02_23_BLS.png", plot = last_plot(), 
+       device = "png", path = here::here("Output", "2021_02_23_BLS"),
        width = 9, height = 7)
 
 ```
