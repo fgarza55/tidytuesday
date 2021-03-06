@@ -1,0 +1,128 @@
+---
+title: "TidyTemplate"
+date: 2021-03-02
+output: html_output
+---
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(tidytext)
+
+```
+
+# Load the weekly Data
+
+Dowload the weekly data and make available in the `tt` object.
+
+```{r Load}
+
+tt <- tt_load("2021-03-02")
+
+```
+
+
+# Readme
+
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+Take an initial look at the format of the data available.
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+youtube <- tt$youtube
+
+```
+
+# Wrangle
+
+
+```{r Wrangle}
+
+superbowl_ads <- tt$youtube 
+
+beer_ads <- superbowl_ads %>%
+                add_count(brand, name = "total_commercials") %>%
+                filter(brand == "Bud Light" | brand == "Budweiser") %>%
+                rename(sex = use_sex, `Show product quickly` = show_product_quickly) %>%
+                pivot_longer(cols = funny:sex, names_to = "category") %>%
+                group_by(brand, category, value) %>%
+                summarise(count = n(), 
+                          perc = n()/total_commercials) %>%
+    
+                
+                group_by(brand, category, perc) %>%
+                filter(value == TRUE) %>% 
+                summarise()
+ 
+beer_ads$brand <- factor(beer_ads$brand, 
+                         levels = c('Budweiser', 'Bud Light'))  
+
+beer_ads$category <- str_to_upper(beer_ads$category)
+
+#in case I use the tidytext
+#https://juliasilge.com/blog/reorder-within/               
+    
+    
+
+```
+
+
+# Visualize
+
+
+```{r Visualize}
+
+beer_ads %>%
+    ggplot(aes(fill = brand, y = perc, x = reorder(category, perc))) +
+    geom_bar(position = "dodge", stat = "identity") +
+    coord_flip() +
+    scale_y_continuous(labels = scales::percent) +
+    scale_fill_manual(values = c("#f1000b","#00A1E1")) +
+  
+    labs(x = "Category", y = "",
+                 title = "Category for beer ads in SB. 2000-2020",
+                 caption = "Data from FiveThirtyEight | Viz by Francisco GF") +
+  
+    theme(
+        plot.title = element_text(hjust = 0.5, size = 60, 
+                                  face = "bold", lineheight = 0.3),
+        plot.caption = element_text(size = 25),
+        plot.margin=unit(c(1,2,1,2),"cm"),
+        
+        axis.text = element_text(size = 35),
+        axis.title = element_text(size = 20),
+        
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 30),
+        legend.background = element_rect(fill = "transparent"),
+        legend.key = element_rect(colour = "transparent", 
+                                    fill = "transparent"),
+  )
+    
+```
+
+# Save Image
+
+```{r}
+
+ggsave("2021_03_02_superbowl.png", plot = last_plot(), 
+       device = "png", path = here::here("Output", "2021_03_02_superbowl"),
+       width = 9, height = 7)
+```
