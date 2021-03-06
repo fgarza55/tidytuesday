@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(tidytuesdayR)
-library(tidytext)
+library(ggtext)
 
 ```
 
@@ -89,32 +89,31 @@ beer_ads$category <- str_to_upper(beer_ads$category)
 ```{r Visualize}
 
 beer_ads %>%
-    ggplot(aes(fill = brand, y = perc, x = reorder(category, perc))) +
-    geom_bar(position = "dodge", stat = "identity") +
-    coord_flip() +
-    scale_y_continuous(labels = scales::percent) +
-    scale_fill_manual(values = c("#f1000b","#00A1E1")) +
-  
-    labs(x = "Category", y = "",
-                 title = "Category for beer ads in SB. 2000-2020",
-                 caption = "Data from FiveThirtyEight | Viz by Francisco GF") +
-  
-    theme(
-        plot.title = element_text(hjust = 0.5, size = 60, 
-                                  face = "bold", lineheight = 0.3),
-        plot.caption = element_text(size = 25),
-        plot.margin=unit(c(1,2,1,2),"cm"),
-        
-        axis.text = element_text(size = 35),
-        axis.title = element_text(size = 20),
-        
-        legend.title = element_blank(),
-        legend.position = "bottom",
-        legend.text = element_text(size = 30),
-        legend.background = element_rect(fill = "transparent"),
-        legend.key = element_rect(colour = "transparent", 
-                                    fill = "transparent"),
-  )
+     ggplot(aes(fill = brand, y = perc, x = reorder(category, perc))) +
+     geom_bar(position = "dodge", stat = "identity", width = 0.6) +
+     coord_flip() +
+     scale_y_continuous(labels = scales::percent) +
+     scale_fill_manual(values = c("#f1000b", "#00A1E1")) +
+   
+     labs(x = "", y = "",
+                 title = "Themes from <span style=color:#00A1E1;>Bud Light</span> and <span style=color:#f1000b>Budweiser</span><br>Super Bowl Commercials.<br>2000-2020.",
+                 caption = "Data from FiveThirtyEight | Viz by Francisco GF") + 
+     theme_void() +
+     theme(
+         plot.title = element_markdown(hjust = 0.5, size = 50, 
+                                   face = "bold", lineheight = 0.3, 
+                                   margin = margin(b = 1, unit = "cm")),
+         plot.caption = element_text(size = 30, 
+                                     margin = margin(t = 2, unit = "cm")),
+         plot.margin=unit(c(2,2,.5,.5),"cm"),
+         plot.background = element_rect(fill ="#d3d3d3"),
+       
+         
+         axis.text = element_text(size = 35, hjust = 1),
+         axis.title = element_text(size = 20),
+         
+         legend.position = "none"
+   )
     
 ```
 
@@ -124,5 +123,5 @@ beer_ads %>%
 
 ggsave("2021_03_02_superbowl.png", plot = last_plot(), 
        device = "png", path = here::here("Output", "2021_03_02_superbowl"),
-       width = 9, height = 7)
+       width = 25, height = 20)
 ```
