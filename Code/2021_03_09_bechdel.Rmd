@@ -1,0 +1,101 @@
+---
+title: "TidyTemplate"
+date: 2021-03-09
+output: html_output
+---
+
+# TidyTuesday
+
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes)
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2021-03-09")
+
+```
+
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+
+# Glimpse Data
+
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+```
+
+# Wrangle
+
+```{r Wrangle}
+
+bechdel <- tt$raw_bechdel
+movies <- tt$movies
+
+movies_tidy <- movies %>%
+    select(year, binary, imdb_rating) %>%
+    drop_na() %>%
+    group_by(year, binary)
+    
+mean_vline <- ddply(movies_tidy, "binary", summarise, grp.mean=mean(imdb_rating))
+
+```
+
+
+# Visualize
+
+Using your processed dataset, create your unique visualization.
+
+```{r Visualize}
+
+movies_tidy %>%
+    ggplot(aes(x = imdb_rating, group = binary, fill = binary)) +
+    geom_density(alpha = 0.5) + 
+    geom_vline(aes(xintercept = mean(imdb_rating))) +
+    scale_x_continuous(breaks = seq(from = 0, to = 10, by = 1), limits = c(2,10)) +
+    
+    labs(x = "IMDB Rating", y = "Density",
+                 title = "Bechdel Test",
+                subtitle = "Density of IMDB Ratings by Bechdel Test result for films from 1970 to 2020",
+                 caption = "Data from FiveThirtyEight | Viz by Francisco GF") +
+    theme_solarized() +
+    theme(
+        plot.title = element_text(face = "bold"),
+        legend.title = element_blank(),
+        legend.position = "bottom",
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+    )
+    
+   
+  
+```
+
+# Save Image
+
+```{r}
+
+ggsave("2021_03_09_bechdel.png", plot = last_plot(), 
+       device = "png", path = here::here("Output", "2021_03_09_bechdel"),
+       width = 9, height = 7)
+```
