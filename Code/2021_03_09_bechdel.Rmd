@@ -56,15 +56,12 @@ movies_tidy <- movies %>%
     select(year, binary, imdb_rating) %>%
     drop_na() %>%
     group_by(year, binary)
-    
-mean_vline <- ddply(movies_tidy, "binary", summarise, grp.mean=mean(imdb_rating))
 
 ```
 
 
 # Visualize
 
-Using your processed dataset, create your unique visualization.
 
 ```{r Visualize}
 
@@ -75,9 +72,10 @@ movies_tidy %>%
     scale_x_continuous(breaks = seq(from = 0, to = 10, by = 1), limits = c(2,10)) +
     
     labs(x = "IMDB Rating", y = "Density",
-                 title = "Bechdel Test",
+                 title = "Bechdel Test, measuring Hollywood’s gender bias",
                 subtitle = "Density of IMDB Ratings by Bechdel Test result for films from 1970 to 2020",
                  caption = "Data from FiveThirtyEight | Viz by Francisco GF") +
+    
     theme_solarized() +
     theme(
         plot.title = element_text(face = "bold"),
