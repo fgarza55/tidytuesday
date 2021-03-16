@@ -73,7 +73,7 @@ movies_tidy %>%
     
     labs(x = "IMDB Rating", y = "Density",
                  title = "Bechdel Test, measuring Hollywood’s gender bias",
-                subtitle = "Density of IMDB Ratings by Bechdel Test result for films from 1970 to 2020",
+                subtitle = "Density of IMDB Ratings by Bechdel Test result for films from 1970 to 2013",
                  caption = "Data from FiveThirtyEight | Viz by Francisco GF") +
     
     theme_solarized() +
