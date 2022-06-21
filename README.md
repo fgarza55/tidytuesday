@@ -1,6 +1,10 @@
 # tidytuesday
 Code and Graphics for #tidytuesday
 
+### May 3, 2022 (Wk 18): Scooby Doo
+<img src=https://github.com/fgarza55/tidytuesday/tree/master/Output/2022_05_03_Wind_Solar_Utilities>
+
+***
 
 ### July 13, 2021 (Wk 29): Scooby Doo
 <img src=https://github.com/fgarza55/tidytuesday/blob/master/Output/2021_07_13_scooby_doo/2021_07_13_scooby_doo.png>
