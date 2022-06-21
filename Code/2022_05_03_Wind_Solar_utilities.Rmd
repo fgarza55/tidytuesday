@@ -1,0 +1,89 @@
+---
+title: "TidyTemplate"
+date: 2022-06-21
+output: html_output
+---
+
+# TidyTuesday
+
+```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(tidytuesdayR)
+library(ggthemes)
+
+
+```
+
+# Load the weekly Data
+
+```{r Load}
+
+tt <- tt_load("2022-05-03")
+
+```
+
+# Readme
+
+```{r Readme, eval = interactive()}
+
+tt
+
+```
+
+# Glimpse Data
+
+```{r Glimpse}
+
+tt %>% 
+  map(glimpse)
+
+average_cost_tidy <- tt$average_cost %>%
+                    pivot_longer(cols = !year, 
+                                 names_to = "energy_source", 
+                                 values_to = "cost_$/mwh")
+
+```
+
+
+# Visualize
+
+```{r Visualize}
+
+plot <- average_cost_tidy %>%
+  ggplot( aes(x=year, y=cost_mwh, group=energy_source, color=energy_source)) +
+    geom_line(size = 1.5) +
+    
+    
+    theme_economist() +
+    theme(legend.title = element_blank(), 
+          axis.title.y = element_text(margin = margin(t = -10, r = 15, b = 0, l = 0))) +
+    
+    scale_color_manual(values = c("#dd4b1a", "#FDB813", "#0071B8"), 
+                       labels = c("Gas", "Solar", "Wind")) + 
+    
+    labs(title = "Let the Solar Costs Go Down on Me",
+             subtitle = "",
+             x = "Year",
+             y = "Avg. Cost of Power (dollars/MWh)",
+             caption = "Data from the Berkeley Lab\n Viz by Francisco GF") 
+
+plot
+  
+```
+
+# Save Image
+
+```{r}
+
+ggsave(plot,
+       filename = here::here("Output",
+                             "2022_05_03_Wind_Solar_Utilities",
+                             "2022_05_03_Wind_Solar_Utilities.png"),
+       dpi= 300,
+       height = 6,
+       width = 8)
+
+```

@@ -13,12 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 
 library(tidyverse)
 library(tidytuesdayR)
+library(hrbrthemes)
 
 ```
 
 # Load the weekly Data
-
-Dowload the weekly data and make available in the `tt` object.
 
 ```{r Load}
 
@@ -38,8 +37,6 @@ tt
 
 # Glimpse Data
 
-Take an initial look at the format of the data available.
-
 ```{r Glimpse}
 
 tt %>% 
@@ -49,34 +46,49 @@ tt %>%
 
 # Wrangle
 
-Explore the data and process it into a nice format for plotting! Access each dataset by name by using a dollarsign after the `tt` object and then the name of the data set.
+
 
 ```{r Wrangle}
 
-
+tidydata <- tt$scoobydoo %>%
+                group_by(motive) %>%
+                filter(motive != "NULL") %>%
+                summarise(count = n()) %>%
+                slice_max(order_by = count, n = 10)
 
 ```
 
 
 # Visualize
 
-Using your processed dataset, create your unique visualization.
 
 ```{r Visualize}
 
+tidydata %>%
+    ggplot(aes(x = count, y = reorder(motive, count))) +
+               geom_col(width = .7,
+                        color = "#b8be19", fill = "#b8be19") +
+    
+    
+    theme_ft_rc() +
+    theme(axis.title.x = element_text(size = 15)) +
+    theme(axis.title.y = element_text(size = 15)) +
+
+    
+    labs(x = "Count", y = "Motive",
+                 title = "Top 10 motives from Scooby Doo\nTV Episodes and Movies",
+                 caption = "Data from Kaggle | Viz by Francisco GF") 
 
   
 ```
 
 # Save Image
 
-Save your image for sharing. Be sure to use the `#TidyTuesday` hashtag in your post on twitter! 
 
 ```{r}
 
-# This will save your most recent plot
-ggsave(
-  filename = "My TidyTuesday Plot.png",
-  device = "png")
+ggsave("2021_07_13_scooby_doo.png", plot = last_plot(), 
+       device = "png", path = here::here("Output", "2021_07_13_scooby_doo"),
+       width = 9, height = 7)
 
 ```
